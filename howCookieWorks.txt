@@ -1,0 +1,9 @@
+1. set session stored in redis => sess:fwafwvrwvr (redis key) -> {userId: abc} (redis value)
+
+2. express-session will set a cookie on browser qfneoiwnf3f3 (signed version of session sess:fwafwvrwvr)
+
+3. when user makes a request, then will bear with cookie qfneoiwnf3f3 -> send to server
+
+4. decrypt the cookie qfneoiwnf3f3 -> sess:fwafwvrwvr with the specified secret in session config
+
+5. make a request to redis sess:fwafwvrwvr -> {userId: abc}, user retrieved
