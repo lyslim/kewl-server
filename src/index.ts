@@ -14,22 +14,29 @@ import { PostResolver } from './resolvers/post';
 import { UserResolver } from './resolvers/user';
 import TYPE_ORM_CONFIG from './type-orm.config';
 import { MyContext } from './types';
+import { createUpdootLoader } from './utils/createUpdootLoader';
+import { createUserLoader } from './utils/createUserLoader';
 
 const main = async () => {
-	await createConnection(TYPE_ORM_CONFIG);
 	//const conn =
 	// const orm = await MikroORM.init(mikroOrmConfig);
 
 	// await orm.getMigrator().up();
+	
+	// createConnection is deprecated, use new DataSource() instead
+	const conn = await createConnection(TYPE_ORM_CONFIG);
+	conn.runMigrations();
 
 	const app = express();
 
 	const RedisStore = connectRedis(session);
-	const redis = new Redis();
+	const redis = new Redis(process.env.REDIS_URL);
+
+	app.set('trust proxy', 1);
 
 	app.use(
 		cors({
-			origin: 'http://localhost:3000',
+			origin: process.env.CORS_ORIGIN,
 			credentials: true,
 		})
 	);
@@ -46,9 +53,10 @@ const main = async () => {
 				httpOnly: true, // frontend cannot access cookie
 				sameSite: 'lax', // csrf
 				secure: IS_PRODUCTION, // cookie only works in https
+				domain: IS_PRODUCTION ? '.unknown-pleasure.com' : undefined
 			},
 			saveUninitialized: false,
-			secret: 'vh49i44mgkmfgii4g3spfk295kmfg',
+			secret: process.env.SESSION_SECRET,
 			resave: false,
 		})
 	);
@@ -58,7 +66,7 @@ const main = async () => {
 			resolvers: [HelloResolver, PostResolver, UserResolver],
 			validate: false,
 		}),
-		context: ({ req, res }): MyContext => ({ req, res, redis }),
+		context: ({ req, res }): MyContext => ({ req, res, redis, userLoader: createUserLoader(), updootLoader: createUpdootLoader() }),
 		plugins: [
 			ApolloServerPluginLandingPageGraphQLPlayground(), // enable good old graphql playground
 		],
@@ -68,7 +76,7 @@ const main = async () => {
 
 	apolloServer.applyMiddleware({ app, cors: false });
 
-	app.listen(4000, () => {
+	app.listen(parseInt(process.env.PORT), () => {
 		console.log('server started on localhost:4000');
 	});
 

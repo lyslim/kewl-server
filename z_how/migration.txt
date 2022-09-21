@@ -1,0 +1,5 @@
+1. use https://www.mockaroo.com/ to get mock data (fake sql data)
+
+2. to create migration - npx typeorm migration:create -n FakePosts 
+
+3. createdb testkewl1

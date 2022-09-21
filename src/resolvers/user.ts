@@ -1,5 +1,5 @@
 import argon2 from 'argon2';
-import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Ctx, FieldResolver, Mutation, Query, Resolver, Root } from 'type-graphql';
 import { v4 } from 'uuid';
 
 import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from '../constants';
@@ -10,10 +10,19 @@ import { validateRegister } from '../utils/validateRegister';
 import { UsernamePasswordInput } from './UsernamePasswordInput';
 import { UserResponse } from './UserResponse';
 
-@Resolver()
+@Resolver(User)
 export class UserResolver {
+	@FieldResolver(() => String)
+	email(@Root() user: User, @Ctx() { req }: MyContext): string {
+		if (req.session.userId === user.uuid) {
+			return user.email;
+		}
+		// disallow to see others' email
+		return '';
+	}
+
 	@Query(() => User, { nullable: true })
-	me(@Ctx() { req }: MyContext) {
+	me(@Ctx() { req }: MyContext): Promise<User | void> | null {
 		console.log('session: ' + JSON.stringify(req.session));
 
 		if (!req.session.userId) {
