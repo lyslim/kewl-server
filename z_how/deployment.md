@@ -126,6 +126,6 @@
     3. encrypt the app, without step 26, this will fail.
         > `dokku letsencrypt:enable api`
 
-* Trick:
+**Trick**:
 1. in ssh terminal, use ctrl + r to look up commands, and right arrow to select it.
 2. cookie - https://github.com/benawad/how-to-debug-cookies 
