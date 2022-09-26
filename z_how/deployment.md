@@ -121,10 +121,14 @@
 27. setup https
     1. install letsencrypt
         > `sudo dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git`
-    2. set DOKKU_LETSENCRYPT_EMAIL
+    2. set DOKKU_LETSENCRYPT_EMAIL 
         > `dokku config:set --no-restart api DOKKU_LETSENCRYPT_EMAIL=theycallmek@163.com`
     3. encrypt the app, without step 26, this will fail.
         > `dokku letsencrypt:enable api`
+
+28. setup deployment script
+    1. like `./deploy.sh`
+    2. make it executable - `chmod +x deploy.sh`
 
 **Trick**:
 1. in ssh terminal, use ctrl + r to look up commands, and right arrow to select it.
