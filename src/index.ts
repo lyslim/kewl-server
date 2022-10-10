@@ -24,8 +24,9 @@ const main = async () => {
 	// await orm.getMigrator().up();
 	
 	// createConnection is deprecated, use new DataSource() instead
-	const conn = await createConnection(TYPE_ORM_CONFIG);
-	conn.runMigrations();
+	// const conn =
+	await createConnection(TYPE_ORM_CONFIG);
+	// conn.runMigrations();
 
 	const app = express();
 
